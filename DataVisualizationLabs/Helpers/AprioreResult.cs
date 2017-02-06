@@ -1,4 +1,4 @@
-﻿using Models;
+﻿using Models.Abstraction;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,12 +9,12 @@ namespace Helpers
         public double PositiveResultCount { get; set; }
         public double PositiveResultCoeficient { get; set; }
 
-        public IEnumerable<Extusia> Models { get; set; }
+        public IEnumerable<IClasified> Models { get; set; }
 
         public void GetPositiveResult()
         {
             var count = (from m in Models
-                         where m.Stopper == true
+                         where m.ClasificationResult == true
                          select m).Count();
 
             PositiveResultCount = count;

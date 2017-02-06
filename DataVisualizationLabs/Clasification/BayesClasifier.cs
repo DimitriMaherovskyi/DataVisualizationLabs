@@ -1,21 +1,22 @@
-﻿using Helpers;
-using Models;
+﻿using Clasification.Abstraction;
+using Helpers;
+using Models.Abstraction;
 using System.Collections.Generic;
 
 namespace Clasification
 {
-    public class BayesClasifier
+    public class BayesClasifier : IClasifier
     {
-        public BayesClasifier(IEnumerable<Extusia> extusias, Extusia clasified)
+        public BayesClasifier(IEnumerable<IClasified> samples, IClasified clasified)
         {
-            ClasifiedExtusia = clasified;
-            Extusias = new List<Extusia>(extusias);
+            Clasified = clasified;
+            Samples = new List<IClasified>(samples);
             Apriore = new AprioreResult();
             Aposterior = new AposteriorResult();
         }
 
-        public List<Extusia> Extusias { get; set; }
-        public Extusia ClasifiedExtusia { get; set; }
+        public List<IClasified> Samples { get; set; }
+        public IClasified Clasified { get; set; }
         public AprioreResult Apriore { get; set; }
         public AposteriorResult Aposterior { get; set; }
 
@@ -23,7 +24,7 @@ namespace Clasification
         {
             // Counting coeficient.
             var result = 1d;
-            Aposterior.CountCoeficients(ClasifiedExtusia, Extusias, Apriore);
+            Aposterior.CountCoeficients(Clasified, Samples, Apriore);
 
             foreach (var p in Aposterior.PositiveResultCoeficients)
             {
@@ -35,11 +36,11 @@ namespace Clasification
             // Clasifying.
             if (result > 0.5)
             {
-                ClasifiedExtusia.Stopper = true;
+                Clasified.ClasificationResult = true;
             }
             if (result < 0.5)
             {
-                ClasifiedExtusia.Stopper = false;
+                Clasified.ClasificationResult = false;
             }
         }
     }
