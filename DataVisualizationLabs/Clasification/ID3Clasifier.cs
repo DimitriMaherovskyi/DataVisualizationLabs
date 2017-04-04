@@ -1,4 +1,5 @@
 ﻿using Clasification.Abstraction;
+using Enums;
 using Helpers;
 using Models;
 using Models.Abstraction;
@@ -41,7 +42,60 @@ namespace Clasification
 
         private void ClasifyGame(IEnumerable<Game> games)
         {
-            Result = "Game was clasified";
+            var gamesCount = games.Count();
+            var opponents = (from game in games
+                             where game.Opponent == GameOpponent.Stronger
+                             select game).Count();
+
+            var place = (from game in games
+                         where game.Placement == GamePlacement.Home
+                         select game).Count();
+
+            var leaders = (from game in games
+                           where game.Leaders == GameLeaders.Playing
+                           select game).Count();
+
+            var rain = (from game in games
+                        where game.IsRaining
+                        select game).Count();
+
+            var str = new StringBuilder();
+            str.Append("If: ");
+            if (opponents == gamesCount)
+            {
+                str.Append("stronger opponents, ");
+            }
+            if (opponents == 0)
+            {
+                str.Append("weaker opponents, ");
+            }
+            if (place == gamesCount)
+            {
+                str.Append("game at home, ");
+            }
+            if (place == 0)
+            {
+                str.Append("game away, ");
+            }
+            if (leaders == gamesCount)
+            {
+                str.Append("leaders playing, ");
+            }
+            if (leaders == 0)
+            {
+                str.Append("leaders not playing, ");
+            }
+            if (rain == gamesCount)
+            {
+                str.Append("raining, ");
+            }
+            if (rain == 0)
+            {
+                str.Append("not raining, ");
+            }
+            str.Append("then game is probably won");
+
+            Result = str.ToString();
         }
     }
 }
