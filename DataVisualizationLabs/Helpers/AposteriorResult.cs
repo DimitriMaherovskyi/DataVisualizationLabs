@@ -8,13 +8,23 @@ namespace Helpers
 {
     public class AposteriorResult
     {
+        public AposteriorResult()
+        {
+            PositiveResultCoeficients = new List<double>();
+        }
+
         public List<double> PositiveResultCoeficients { get; set; }
 
         public void CountCoeficients(IClasified clasified, IEnumerable<IClasified> samples, AprioreResult apriore)
         {
             if (clasified is Extusia)
             {
-                CountExtusia((Extusia)clasified, (IEnumerable<Extusia>)samples, apriore);
+                var extusias = new List<Extusia>();
+                foreach (var ext in samples)
+                {
+                    extusias.Add(ext as Extusia);
+                }
+                CountExtusia((Extusia)clasified, extusias, apriore);
             }
             else
             {
@@ -22,7 +32,7 @@ namespace Helpers
             }
         }
 
-        private void CountExtusia(Extusia clasifiedExtusia, IEnumerable<Extusia> extusias, AprioreResult apriore)
+        private void CountExtusia(Extusia clasifiedExtusia, List<Extusia> extusias, AprioreResult apriore)
         {
             apriore.Models = extusias;
             apriore.GetPositiveResult();
