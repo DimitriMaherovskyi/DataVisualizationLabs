@@ -5,15 +5,18 @@ using Models;
 using Models.Abstraction;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
     class Program
     {
         static void Main(string[] args)
+        {
+            Lab3();
+            Lab4();
+        }
+
+        private static void Lab3()
         {
             // -- Lab 3 --
             // Creating samples.
@@ -48,7 +51,10 @@ namespace ConsoleApp
             var bayesClasifier = new BayesClasifier(sample, clasifier);
             bayesClasifier.Clasify();
             Console.WriteLine(bayesClasifier.Clasified.ClasificationResult);
+        }
 
+        private static void Lab4()
+        {
             // -- Lab 4 --
             // Creating samples.
             var games = new List<IClasified>();
@@ -61,10 +67,10 @@ namespace ConsoleApp
             games.Add(new Game(GameOpponent.Stronger, GamePlacement.Away, GameLeaders.Playing, true, false));
             games.Add(new Game(GameOpponent.Weaker, GamePlacement.Away, GameLeaders.Playing, false, true));
 
+            // Init clasifier.
             var id3Clasifier = new ID3Clasifier(new ID3ResultSet(games));
             id3Clasifier.Clasify();
             Console.WriteLine(id3Clasifier.Result);
-
         }
     }
 }
