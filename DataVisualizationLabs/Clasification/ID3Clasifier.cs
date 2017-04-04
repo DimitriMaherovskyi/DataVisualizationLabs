@@ -19,12 +19,19 @@ namespace Clasification
             _resultSet = resultSet;
         }
 
+        public string Result { get; private set; }
+
         public void Clasify()
         {
             var minimizedClacified = new List<IClasified>(_resultSet.DetermineMinimizedResultSet());
-            if (minimizedClacified is IEnumerable<Game>)
+            if (minimizedClacified[0] is Game)
             {
-                ClasifyGame(minimizedClacified as IEnumerable<Game>);
+                var games = new List<Game>();
+                foreach (var game in minimizedClacified)
+                {
+                    games.Add(game as Game);
+                }
+                ClasifyGame(games);
             }
             else
             {
@@ -34,7 +41,7 @@ namespace Clasification
 
         private void ClasifyGame(IEnumerable<Game> games)
         {
-
+            Result = "Game was clasified";
         }
     }
 }

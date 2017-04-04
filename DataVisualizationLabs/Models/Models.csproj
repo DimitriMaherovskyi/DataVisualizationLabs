@@ -43,6 +43,7 @@
     <Compile Include="Abstraction\IClasified.cs" />
     <Compile Include="Extusia.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="ID3Coeficient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -63,6 +63,7 @@ namespace ConsoleApp
 
             var id3Clasifier = new ID3Clasifier(new ID3ResultSet(games));
             id3Clasifier.Clasify();
+            Console.WriteLine(id3Clasifier.Result);
 
         }
     }

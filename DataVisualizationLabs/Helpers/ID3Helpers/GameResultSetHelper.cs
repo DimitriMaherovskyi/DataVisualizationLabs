@@ -12,12 +12,27 @@ namespace Helpers.ID3Helpers
 {
     public class GameResultSetHelper : IID3Helper
     {
+        private List<Game> filteredGames;
+
+        private bool _opponentsChecked;
+        private bool _placementChecked;
+        private bool _leadersChecked;
+        private bool _rainChecked;
+
+        public GameResultSetHelper()
+        {
+            _opponentsChecked = false;
+            _placementChecked = false;
+            _leadersChecked = false;
+            _rainChecked = false;
+            filteredGames = new List<Game>();
+        }
+
         public IEnumerable<IClasified> DetermineGameCoeficients(IEnumerable<IClasified> clasified)
         {
             var games = ConvertIClacified(clasified);
 
-            var coeficients = new List<double>();
-            var filteredGames = new List<Game>();
+            var coeficients = new List<ID3Coeficient>();
 
             var totalWinGamesCount = (from g in games
                                       where g.ClasificationResult == true
@@ -26,18 +41,51 @@ namespace Helpers.ID3Helpers
             while (games.Count() != totalWinGamesCount)
             {
                 filteredGames = new List<Game>();
+                coeficients = new List<ID3Coeficient>();
 
-                coeficients.Add(CalculateStrongerOpponentCoeficient(games));
-                coeficients.Add(CalculateWeakerOpponentCoeficient(games));
-                coeficients.Add(CalculateHomeGameCoeficient(games));
-                coeficients.Add(CalculateAwayGameCoeficient(games));
-                coeficients.Add(CalculateGameWithLeadersCoeficient(games));
-                coeficients.Add(CalculateGameWithoutLeadersCoeficient(games));
-                coeficients.Add(CalculateGameWithRainCoeficient(games));
-                coeficients.Add(CalculateGameWithoutRainCoeficient(games));
+                if (!_opponentsChecked)
+                {
+                    coeficients.Add(CalculateStrongerOpponentCoeficient(games));
+                    coeficients.Add(CalculateWeakerOpponentCoeficient(games));
+                }
+                else
+                {
+                    coeficients.Add(new ID3Coeficient());
+                    coeficients.Add(new ID3Coeficient());
+                }
+                if (!_placementChecked)
+                {
+                    coeficients.Add(CalculateHomeGameCoeficient(games));
+                    coeficients.Add(CalculateAwayGameCoeficient(games));
+                }
+                else
+                {
+                    coeficients.Add(new ID3Coeficient());
+                    coeficients.Add(new ID3Coeficient());
+                }
+                if (!_leadersChecked)
+                {
+                    coeficients.Add(CalculateGameWithLeadersCoeficient(games));
+                    coeficients.Add(CalculateGameWithoutLeadersCoeficient(games));
+                }
+                else
+                {
+                    coeficients.Add(new ID3Coeficient());
+                    coeficients.Add(new ID3Coeficient());
+                }
+                if (!_rainChecked)
+                {
+                    coeficients.Add(CalculateGameWithRainCoeficient(games));
+                    coeficients.Add(CalculateGameWithoutRainCoeficient(games));
+                }
+                else
+                {
+                    coeficients.Add(new ID3Coeficient());
+                    coeficients.Add(new ID3Coeficient());
+                }
 
                 var greatestCoeficient = (from coef in coeficients
-                                          where coef != 1d
+                                          //where coef.Coeficient != 1d
                                           select coef).Max();
 
                 for (var i = 0; i < coeficients.Count; i++)
@@ -49,9 +97,18 @@ namespace Helpers.ID3Helpers
                         break;
                     }
                 }
+                break;
             }
 
             return filteredGames;
+        }
+
+        private void SetCheckersFalse()
+        {
+            _opponentsChecked = false;
+            _placementChecked = false;
+            _leadersChecked = false;
+            _rainChecked = false;
         }
 
         private List<Game> FilterGames(int index, List<Game> games)
@@ -64,6 +121,7 @@ namespace Helpers.ID3Helpers
                         filteredGames = (from g in games
                                          where g.Opponent == GameOpponent.Stronger
                                          select g).ToList();
+                        _opponentsChecked = true;
                         break;
                     }
                 case 1:
@@ -71,6 +129,7 @@ namespace Helpers.ID3Helpers
                         filteredGames = (from g in games
                                          where g.Opponent == GameOpponent.Weaker
                                          select g).ToList();
+                        _opponentsChecked = true;
                         break;
                     }
                 case 2:
@@ -78,6 +137,7 @@ namespace Helpers.ID3Helpers
                         filteredGames = (from g in games
                                          where g.Placement == GamePlacement.Home
                                          select g).ToList();
+                        _placementChecked = true;
                         break;
                     }
                 case 3:
@@ -85,6 +145,7 @@ namespace Helpers.ID3Helpers
                         filteredGames = (from g in games
                                          where g.Placement == GamePlacement.Away
                                          select g).ToList();
+                        _placementChecked = true;
                         break;
                     }
                 case 4:
@@ -92,6 +153,7 @@ namespace Helpers.ID3Helpers
                         filteredGames = (from g in games
                                          where g.Leaders == GameLeaders.Playing
                                          select g).ToList();
+                        _leadersChecked = true;
                         break;
                     }
                 case 5:
@@ -99,6 +161,7 @@ namespace Helpers.ID3Helpers
                         filteredGames = (from g in games
                                          where g.Leaders == GameLeaders.NotPlaying
                                          select g).ToList();
+                        _leadersChecked = true;
                         break;
                     }
                 case 6:
@@ -106,6 +169,7 @@ namespace Helpers.ID3Helpers
                         filteredGames = (from g in games
                                          where g.IsRaining
                                          select g).ToList();
+                        _rainChecked = true;
                         break;
                     }
                 case 7:
@@ -113,6 +177,7 @@ namespace Helpers.ID3Helpers
                         filteredGames = (from g in games
                                          where !g.IsRaining
                                          select g).ToList();
+                        _rainChecked = true;
                         break;
                     }
             }
@@ -131,7 +196,7 @@ namespace Helpers.ID3Helpers
             return games;
         }
 
-        private double CalculateStrongerOpponentCoeficient(IEnumerable<Game> games)
+        private ID3Coeficient CalculateStrongerOpponentCoeficient(IEnumerable<Game> games)
         {
             double strongerOpponentCount = (from game in games
                                             where game.Opponent == GameOpponent.Stronger
@@ -139,7 +204,7 @@ namespace Helpers.ID3Helpers
 
             if (strongerOpponentCount == 0)
             {
-                return 0;
+                return new ID3Coeficient();
             }
 
             double strongerOpponentWinCount = (from game in games
@@ -147,10 +212,10 @@ namespace Helpers.ID3Helpers
                                                game.ClasificationResult == true
                                                select game).Count();
 
-            return strongerOpponentWinCount / strongerOpponentCount; 
+            return new ID3Coeficient(strongerOpponentWinCount / strongerOpponentCount, (int)strongerOpponentCount); 
         }
 
-        private double CalculateWeakerOpponentCoeficient(IEnumerable<Game> games)
+        private ID3Coeficient CalculateWeakerOpponentCoeficient(IEnumerable<Game> games)
         {
             double weakerOpponentCount = (from game in games
                                        where game.Opponent == GameOpponent.Weaker
@@ -158,7 +223,7 @@ namespace Helpers.ID3Helpers
 
             if (weakerOpponentCount == 0)
             {
-                return 0;
+                return new ID3Coeficient();
             }
 
             double weakerOpponentWinCount = (from game in games
@@ -166,10 +231,10 @@ namespace Helpers.ID3Helpers
                                           game.ClasificationResult == true
                                           select game).Count();
 
-            return weakerOpponentWinCount / weakerOpponentCount;
+            return new ID3Coeficient(weakerOpponentWinCount / weakerOpponentCount, (int)weakerOpponentCount);
         }
 
-        private double CalculateHomeGameCoeficient(IEnumerable<Game> games)
+        private ID3Coeficient CalculateHomeGameCoeficient(IEnumerable<Game> games)
         {
             double homeGameCount = (from game in games
                                  where game.Placement == GamePlacement.Home
@@ -177,7 +242,7 @@ namespace Helpers.ID3Helpers
 
             if (homeGameCount == 0)
             {
-                return 0;
+                return new ID3Coeficient();
             }
 
             double homeGameWinCount = (from game in games
@@ -185,10 +250,10 @@ namespace Helpers.ID3Helpers
                                     game.ClasificationResult == true
                                     select game).Count();
 
-            return homeGameWinCount / homeGameCount;
+            return new ID3Coeficient(homeGameWinCount / homeGameCount, (int)homeGameCount);
         }
 
-        private double CalculateAwayGameCoeficient(IEnumerable<Game> games)
+        private ID3Coeficient CalculateAwayGameCoeficient(IEnumerable<Game> games)
         {
             double awayGameCount = (from game in games
                                  where game.Placement == GamePlacement.Away
@@ -196,7 +261,7 @@ namespace Helpers.ID3Helpers
 
             if (awayGameCount == 0)
             {
-                return 0;
+                return new ID3Coeficient();
             }
 
             double awayGameWinCount = (from game in games
@@ -204,10 +269,10 @@ namespace Helpers.ID3Helpers
                                     game.ClasificationResult == true
                                     select game).Count();
 
-            return awayGameWinCount / awayGameCount;
+            return new ID3Coeficient(awayGameWinCount / awayGameCount, (int)awayGameCount);
         }
 
-        private double CalculateGameWithLeadersCoeficient(IEnumerable<Game> games)
+        private ID3Coeficient CalculateGameWithLeadersCoeficient(IEnumerable<Game> games)
         {
             double gameWithLeadersCount = (from game in games
                                         where game.Leaders == GameLeaders.Playing
@@ -215,7 +280,7 @@ namespace Helpers.ID3Helpers
 
             if (gameWithLeadersCount == 0)
             {
-                return 0;
+                return new ID3Coeficient();
             }
 
             double gameWithLeadersWinCount = (from game in games
@@ -223,10 +288,10 @@ namespace Helpers.ID3Helpers
                                            game.ClasificationResult == true
                                            select game).Count();
 
-            return gameWithLeadersWinCount / gameWithLeadersCount;
+            return new ID3Coeficient(gameWithLeadersWinCount / gameWithLeadersCount, (int)gameWithLeadersCount);
         }
 
-        private double CalculateGameWithoutLeadersCoeficient(IEnumerable<Game> games)
+        private ID3Coeficient CalculateGameWithoutLeadersCoeficient(IEnumerable<Game> games)
         {
             double gameWithoutLeadersCount = (from game in games
                                            where game.Leaders == GameLeaders.NotPlaying
@@ -234,7 +299,7 @@ namespace Helpers.ID3Helpers
 
             if (gameWithoutLeadersCount == 0)
             {
-                return 0;
+                return new ID3Coeficient();
             }
 
             double gameWithoutLeadersWinCount = (from game in games
@@ -242,10 +307,10 @@ namespace Helpers.ID3Helpers
                                               game.ClasificationResult == true
                                               select game).Count();
 
-            return gameWithoutLeadersWinCount / gameWithoutLeadersCount;
+            return new ID3Coeficient(gameWithoutLeadersWinCount / gameWithoutLeadersCount, (int)gameWithoutLeadersCount);
         }
 
-        private double CalculateGameWithRainCoeficient(IEnumerable<Game> games)
+        private ID3Coeficient CalculateGameWithRainCoeficient(IEnumerable<Game> games)
         {
             double gameWithRainCount = (from game in games
                                      where game.IsRaining
@@ -253,7 +318,7 @@ namespace Helpers.ID3Helpers
 
             if (gameWithRainCount == 0)
             {
-                return 0;
+                return new ID3Coeficient();
             }
 
             double gameWithRainWinCount = (from game in games
@@ -261,10 +326,10 @@ namespace Helpers.ID3Helpers
                                         game.ClasificationResult == true
                                         select game).Count();
 
-            return gameWithRainWinCount / gameWithRainCount;
+            return new ID3Coeficient(gameWithRainWinCount / gameWithRainCount, (int)gameWithRainCount);
         }
 
-        private double CalculateGameWithoutRainCoeficient(IEnumerable<Game> games)
+        private ID3Coeficient CalculateGameWithoutRainCoeficient(IEnumerable<Game> games)
         {
             double gameWithoutRainCount = (from game in games
                                         where !game.IsRaining
@@ -272,7 +337,7 @@ namespace Helpers.ID3Helpers
 
             if (gameWithoutRainCount == 0)
             {
-                return 0;
+                return new ID3Coeficient();
             }
 
             double gameWithoutRainWinCount = (from game in games
@@ -280,7 +345,7 @@ namespace Helpers.ID3Helpers
                                            game.ClasificationResult == true
                                            select game).Count();
 
-            return gameWithoutRainWinCount / gameWithoutRainCount;
+            return new ID3Coeficient(gameWithoutRainWinCount / gameWithoutRainCount, (int)gameWithoutRainCount);
         }
     }
 }
