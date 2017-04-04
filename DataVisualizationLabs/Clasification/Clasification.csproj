@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Abstraction\IClasifier.cs" />
     <Compile Include="BayesClasifier.cs" />
+    <Compile Include="ID3Clasifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

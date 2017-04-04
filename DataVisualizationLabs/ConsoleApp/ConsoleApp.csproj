@@ -57,6 +57,10 @@
       <Project>{55AB4DF9-B9F7-4E6D-86F4-4D0BA35C247A}</Project>
       <Name>Enums</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Helpers\Helpers.csproj">
+      <Project>{0D1DBBE7-89CC-45A0-91F3-2F2A33D1D2FE}</Project>
+      <Name>Helpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{537EE6D3-D428-4C55-9D8F-D99A9661C33F}</Project>
       <Name>Models</Name>

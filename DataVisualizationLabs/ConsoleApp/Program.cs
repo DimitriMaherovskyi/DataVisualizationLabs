@@ -1,5 +1,6 @@
 ﻿using Clasification;
 using Enums;
+using Helpers;
 using Models;
 using Models.Abstraction;
 using System;
@@ -14,7 +15,7 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            //--Lab 3--
+            // -- Lab 3 --
             // Creating samples.
             var sample = new List<IClasified>();
             sample.Add(new Extusia(120, 30, Density.Low, 3, 165, false));
@@ -47,6 +48,22 @@ namespace ConsoleApp
             var bayesClasifier = new BayesClasifier(sample, clasifier);
             bayesClasifier.Clasify();
             Console.WriteLine(bayesClasifier.Clasified.ClasificationResult);
+
+            // -- Lab 4 --
+            // Creating samples.
+            var games = new List<IClasified>();
+            games.Add(new Game(GameOpponent.Stronger, GamePlacement.Home, GameLeaders.Playing, true, false));
+            games.Add(new Game(GameOpponent.Stronger, GamePlacement.Home, GameLeaders.Playing, false, true));
+            games.Add(new Game(GameOpponent.Stronger, GamePlacement.Home, GameLeaders.NotPlaying, false, true));
+            games.Add(new Game(GameOpponent.Weaker, GamePlacement.Home, GameLeaders.NotPlaying, false, true));
+            games.Add(new Game(GameOpponent.Weaker, GamePlacement.Away, GameLeaders.NotPlaying, false, false));
+            games.Add(new Game(GameOpponent.Weaker, GamePlacement.Home, GameLeaders.NotPlaying, true, true));
+            games.Add(new Game(GameOpponent.Stronger, GamePlacement.Away, GameLeaders.Playing, true, false));
+            games.Add(new Game(GameOpponent.Weaker, GamePlacement.Away, GameLeaders.Playing, false, true));
+
+            var id3Clasifier = new ID3Clasifier(new ID3ResultSet(games));
+            id3Clasifier.Clasify();
+
         }
     }
 }
