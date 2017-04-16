@@ -45,6 +45,8 @@
     <Compile Include="GameOpponent.cs" />
     <Compile Include="GamePlacement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sex.cs" />
+    <Compile Include="Tariff.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

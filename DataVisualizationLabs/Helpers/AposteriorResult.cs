@@ -26,10 +26,51 @@ namespace Helpers
                 }
                 CountExtusia((Extusia)clasified, extusias, apriore);
             }
+            else if (clasified is TelecommunicationClient)
+            {
+                var clients = new List<TelecommunicationClient>();
+                foreach (var client in samples)
+                {
+                    clients.Add(client as TelecommunicationClient);
+                }
+                CountTelecommunicationClient((TelecommunicationClient)clasified, clients, apriore);
+            }
             else
             {
                 throw new NotImplementedException();
             }
+        }
+
+        private void CountTelecommunicationClient(TelecommunicationClient clasifiedClient, List<TelecommunicationClient> clients,
+            AprioreResult apriore)
+        {
+            apriore.Models = clients;
+            apriore.GetPositiveResult();
+
+            var sexCoeficient = (from c in clients
+                                 where c.Sex == clasifiedClient.Sex &&
+                                 c.ClasificationResult == true
+                                 select c).Count() / apriore.PositiveResultCount;
+
+            var ageCoeficient = (from c in clients
+                                 where c.Age == clasifiedClient.Age &&
+                                 c.ClasificationResult == true
+                                 select c).Count() / apriore.PositiveResultCount;
+
+            var tariffCoeficient = (from c in clients
+                                    where c.Tariff == clasifiedClient.Tariff &&
+                                    c.ClasificationResult == true
+                                    select c).Count() / apriore.PositiveResultCount;
+
+            var userUnitsCoeficient = (from c in clients
+                                       where c.UsedUnits == clasifiedClient.UsedUnits &&
+                                       c.ClasificationResult == true
+                                       select c).Count() / apriore.PositiveResultCount;
+
+            PositiveResultCoeficients.Add(sexCoeficient);
+            PositiveResultCoeficients.Add(ageCoeficient);
+            PositiveResultCoeficients.Add(tariffCoeficient);
+            PositiveResultCoeficients.Add(userUnitsCoeficient);
         }
 
         private void CountExtusia(Extusia clasifiedExtusia, List<Extusia> extusias, AprioreResult apriore)

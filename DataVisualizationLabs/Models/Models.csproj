@@ -45,6 +45,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="ID3Coeficient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TelecommunicationClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Enums\Enums.csproj">

@@ -14,8 +14,9 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             Lab3();
-            Lab4();
-            Lab5();
+            //Lab4();
+            //Lab5();
+            //Lab6_7();
         }
 
         private static void Lab3()
@@ -121,6 +122,43 @@ namespace ConsoleApp
             Console.WriteLine(kmeansClusterizer.ShowClustered(rawData, clustering, numClusters, 1));
 
             Console.WriteLine("End k-means clustering");
-        }        
+        }      
+        
+        private static void Lab6_7()
+        {
+            // -- Lab 6 - 7 --
+            // Creating samples
+            var sample = new List<IClasified>();
+            sample.Add(new TelecommunicationClient(Sex.Female, 23, Tariff.Normal, 345, false));
+            sample.Add(new TelecommunicationClient(Sex.Male, 18, Tariff.Power, 9455, false));
+            sample.Add(new TelecommunicationClient(Sex.Male, 36, Tariff.Power, 456, false));
+            sample.Add(new TelecommunicationClient(Sex.Male, 34, Tariff.Normal, 3854, true));
+            sample.Add(new TelecommunicationClient(Sex.Female, 52, Tariff.Economy, 2445, false));
+            sample.Add(new TelecommunicationClient(Sex.Female, 19, Tariff.Economy, 14326, false));
+            sample.Add(new TelecommunicationClient(Sex.Female, 45, Tariff.Normal, 347, false));
+            sample.Add(new TelecommunicationClient(Sex.Male, 42, Tariff.Economy, 5698, true));
+            sample.Add(new TelecommunicationClient(Sex.Male, 21, Tariff.Power, 267, false));
+            sample.Add(new TelecommunicationClient(Sex.Male, 48, Tariff.Normal, 4711, true));
+
+            // Init clasified.
+            var clasifier = new TelecommunicationClient(Sex.Male, 21, Tariff.Economy, 4582);
+
+            // Init clasifier.
+            var bayesClasifier = new BayesClasifier(sample, clasifier);
+            bayesClasifier.Clasify();
+            Console.WriteLine(bayesClasifier.Clasified.ClasificationResult);
+
+            sample.Add(bayesClasifier.Clasified as TelecommunicationClient);
+            clasifier = new TelecommunicationClient(Sex.Female, 22, Tariff.Power, 2119);
+            bayesClasifier = new BayesClasifier(sample, clasifier);
+            bayesClasifier.Clasify();
+            Console.WriteLine(bayesClasifier.Clasified.ClasificationResult);
+
+            sample.Add(bayesClasifier.Clasified as TelecommunicationClient);
+            clasifier = new TelecommunicationClient(Sex.Male, 68, Tariff.Economy, 33);
+            bayesClasifier = new BayesClasifier(sample, clasifier);
+            bayesClasifier.Clasify();
+            Console.WriteLine(bayesClasifier.Clasified.ClasificationResult);
+        }
     }
 }
