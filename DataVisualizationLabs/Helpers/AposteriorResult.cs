@@ -46,14 +46,37 @@ namespace Helpers
         {
             apriore.Models = clients;
             apriore.GetPositiveResult();
+            var ageLimits = new List<Tuple<int, int>>()
+            {
+                {new Tuple<int, int>(0, 18) },
+                {new Tuple<int, int>(18, 30) },
+                {new Tuple<int, int>(30, 45) },
+                {new Tuple<int, int>(45, 60) },
+                {new Tuple<int, int>(60, Int32.MaxValue) }
+            };
+            var userUnitsLimits = new List<Tuple<int, int>>()
+            {
+                { new Tuple<int, int>(0, 100)},
+                { new Tuple<int, int>(100, 500)},
+                { new Tuple<int, int>(500, 2000)},
+                { new Tuple<int, int>(2000, 5000)},
+                { new Tuple<int, int>(5000, Int32.MaxValue)},
+            };
 
             var sexCoeficient = (from c in clients
                                  where c.Sex == clasifiedClient.Sex &&
                                  c.ClasificationResult == true
                                  select c).Count() / apriore.PositiveResultCount;
 
+            // Age
+            var ageLimit = (from age in ageLimits
+                            where clasifiedClient.Age >= age.Item1 &&
+                            clasifiedClient.Age < age.Item2
+                            select age).FirstOrDefault();
+
             var ageCoeficient = (from c in clients
-                                 where c.Age == clasifiedClient.Age &&
+                                 where c.Age >= ageLimit.Item1 &&
+                                 c.Age < ageLimit.Item2 &&
                                  c.ClasificationResult == true
                                  select c).Count() / apriore.PositiveResultCount;
 
@@ -62,8 +85,14 @@ namespace Helpers
                                     c.ClasificationResult == true
                                     select c).Count() / apriore.PositiveResultCount;
 
+            var userUnitsLimit = (from unitsLimit in userUnitsLimits
+                                  where clasifiedClient.UsedUnits >= unitsLimit.Item1 &&
+                                  clasifiedClient.UsedUnits < unitsLimit.Item2
+                                  select unitsLimit).FirstOrDefault();
+
             var userUnitsCoeficient = (from c in clients
-                                       where c.UsedUnits == clasifiedClient.UsedUnits &&
+                                       where c.UsedUnits >= userUnitsLimit.Item1 &&
+                                       c.UsedUnits < userUnitsLimit.Item2 &&
                                        c.ClasificationResult == true
                                        select c).Count() / apriore.PositiveResultCount;
 

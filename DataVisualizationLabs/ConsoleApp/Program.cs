@@ -13,10 +13,10 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            Lab3();
+            //Lab3();
             //Lab4();
             //Lab5();
-            //Lab6_7();
+            Lab6_7();
         }
 
         private static void Lab3()
